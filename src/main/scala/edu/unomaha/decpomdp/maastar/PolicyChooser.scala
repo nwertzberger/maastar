@@ -1,7 +1,8 @@
 package edu.unomaha.decpomdp.maastar
 
 class PolicyChooser {
-  def findBestPolicy(openPolicies: List[Policy], initialBelief: Belief) : Policy = {
-    return null
+  def findBestPolicy(openPolicies: Set[Policy], heuristic: Heuristic, initialBelief: Belief) : Policy = {
+   
+    return new Policy()
   }
 }

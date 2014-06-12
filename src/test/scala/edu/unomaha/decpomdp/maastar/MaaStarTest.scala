@@ -9,11 +9,8 @@ import org.junit.runner.RunWith
  */
 @RunWith(classOf[JUnitRunner])
 class MaaStarTest extends FlatSpec with ShouldMatchers {
-  "a test" should "run well" in {
+  "a test" should "work" in {
     1 should be(1)
   }
   
-  "beans" should "fail" in {
-    1 should be(1)
-  }
 }
