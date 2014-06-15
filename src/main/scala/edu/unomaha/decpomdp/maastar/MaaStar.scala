@@ -1,5 +1,7 @@
 package edu.unomaha.decpomdp.maastar
 
+import edu.unomaha.decpomdp.maastar.game.Policy
+
 /**
  * The class for the MaaStar Algorithm
  *
@@ -37,5 +39,4 @@ class MaaStar(
     }
     return bestPolicy
   }
-
 }
