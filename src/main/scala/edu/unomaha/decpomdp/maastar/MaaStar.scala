@@ -1,5 +1,7 @@
 package edu.unomaha.decpomdp.maastar
 
+import edu.unomaha.decpomdp.maastar.game.State
+
 
 /**
  * The class for the MaaStar Algorithm
@@ -7,7 +9,7 @@ package edu.unomaha.decpomdp.maastar
  * MaaStar
  */
 class MaaStar(
-    initialBelief: Belief,
+    initialBelief: Map[State, Float],
     maxLayers: Int = 10,
     policyExpander: PolicyExpander = new PolicyExpander(),
     policyChooser: PolicyChooser = new PolicyChooser(),
