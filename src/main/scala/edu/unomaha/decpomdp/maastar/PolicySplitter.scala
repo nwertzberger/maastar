@@ -1,6 +1,5 @@
 package edu.unomaha.decpomdp.maastar
 
-import edu.unomaha.decpomdp.maastar.game.Policy
 
 class PolicySplitter {
   def splitOnDepth(children: Set[Policy], maxLayers: Int) : (Set[Policy], Set[Policy]) = {

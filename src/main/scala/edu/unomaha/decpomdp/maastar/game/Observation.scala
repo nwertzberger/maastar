@@ -1,5 +1,5 @@
 package edu.unomaha.decpomdp.maastar.game
 
-class Observation {
+class Observation (desc : String){
 
 }
