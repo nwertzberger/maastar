@@ -7,9 +7,24 @@ import org.junit.runner.RunWith
 
 @RunWith(classOf[JUnitRunner])
 class TigerGameTest extends FlatSpec with ShouldMatchers {
-  "TigerGame" should "be able to give back its states" in {
-    val game = new TigerGame();
-    game.getStates().head should (be (game.tigerLeft) or be (game.tigerRight))
+  val game = new TigerGame();
+
+  "TigerGame" should "know what states it has" in {
+    game.getStates() should equal (Set(game.tigerLeft, game.tigerRight))
+  }
+  
+  it should "be able to give probabilitis for transitions" in {
+    val agents = game.getAgents().toIterator
+    val actions = game.getActions().toIterator
+
+    val jointAction = Map(
+        agents.next() -> actions.next(),
+        agents.next() -> actions.next())
+    
+    game.getStates()
+      .toIterator
+      .next()
+      .getJointActionTransition(jointAction) should not equal(null)
   }
 
 }
