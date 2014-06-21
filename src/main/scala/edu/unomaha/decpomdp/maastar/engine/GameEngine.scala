@@ -14,6 +14,7 @@ class GameEngine(game: TigerGame, communicator: AgentCommunicator = new AgentCom
 
   def start() = {
     _state = game.getStartingState()
+    totalReward = 0.0
   }
 
   def step() = {
@@ -23,7 +24,7 @@ class GameEngine(game: TigerGame, communicator: AgentCommunicator = new AgentCom
       .toMap
     val transition = state.getJointActionTransition(jointAction)
     updateTotalReward(transition)
-    _state = communicator.doAction(transition, jointAction)
+    _state = communicator.doTransition(transition)
   }
 
   def state() = _state

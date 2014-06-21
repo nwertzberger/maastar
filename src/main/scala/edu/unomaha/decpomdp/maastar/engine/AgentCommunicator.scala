@@ -8,7 +8,7 @@ import edu.unomaha.decpomdp.maastar.game.Action
 import edu.unomaha.decpomdp.maastar.game.Transition
 
 class AgentCommunicator {
-  def doAction(transition: Transition, jointAction: Map[Agent, Action]): State = {
+  def doTransition(transition: Transition): State = {
     val choice = Math.random()
     val stateObs = findStateObservationBasedOnChoice(
       transition.nextStates(),
