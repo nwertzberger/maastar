@@ -87,4 +87,8 @@ class TigerGame {
   def getActions(): Set[Action] = {
     return Set(listen, doorLeft, doorRight)
   }
+
+  def getStartingState() : State = {
+    if (Math.random() < 0.5) tigerLeft else tigerRight
+  }
 }

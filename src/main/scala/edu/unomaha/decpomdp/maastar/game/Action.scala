@@ -1,5 +1,5 @@
 package edu.unomaha.decpomdp.maastar.game
 
-class Action (desc : String){
+class Action (desc : String = "Default"){
 
 }
