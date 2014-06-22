@@ -1,8 +1,7 @@
-package maastar.algorithm
+package maastar.algorithm.maastar
 
 import maastar.game.State
-import maastar.heuristic.Heuristic
-import maastar.heuristic.TigerGameHeuristic
+import maastar.heuristic.{Heuristic, TigerGameHeuristic}
 
 
 /**

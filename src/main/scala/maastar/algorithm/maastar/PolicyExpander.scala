@@ -1,4 +1,4 @@
-package maastar.algorithm
+package maastar.algorithm.maastar
 
 import maastar.game.State
 
