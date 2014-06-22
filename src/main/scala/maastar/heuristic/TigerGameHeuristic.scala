@@ -13,6 +13,7 @@ import maastar.game.State
 class TigerGameHeuristic extends Heuristic {
   def estimateReward(agentStates: Map[Agent,Map[State,Double]]): Double = {
     val stateValues = agentStates.values
+
     return 0.0
   }
 }
