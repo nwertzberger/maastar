@@ -2,7 +2,7 @@ package edu.unomaha.decpomdp.maastar.engine
 
 import edu.unomaha.decpomdp.maastar.game.TigerGame
 import edu.unomaha.decpomdp.maastar.game.State
-import edu.unomaha.decpomdp.maastar.game.Agent
+import edu.unomaha.decpomdp.maastar.agent.Agent
 import edu.unomaha.decpomdp.maastar.game.Action
 import edu.unomaha.decpomdp.maastar.game.Observation
 import edu.unomaha.decpomdp.maastar.game.Transition

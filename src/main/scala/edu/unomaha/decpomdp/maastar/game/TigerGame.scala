@@ -1,8 +1,12 @@
 package edu.unomaha.decpomdp.maastar.game
 
-class TigerGame {
-  val agent1 = new Agent("Agent 1")
-  val agent2 = new Agent("Agent 2")
+import edu.unomaha.decpomdp.maastar.agent.Agent
+
+import edu.unomaha.decpomdp.maastar.agent.DecPomdpAgent
+
+class TigerGame (
+    agent1 : Agent = new DecPomdpAgent("Agent 1"),
+    agent2 : Agent = new DecPomdpAgent("Agent 2")) {
 
   val listen = new Action("Listen")
   val doorLeft = new Action("Open Door Left")

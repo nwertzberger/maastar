@@ -4,7 +4,7 @@ import org.scalatest.ShouldMatchers
 import org.scalatest.FlatSpec
 import org.scalamock.scalatest.MockFactory
 import edu.unomaha.decpomdp.maastar.game.TigerGame
-import edu.unomaha.decpomdp.maastar.game.Agent
+import edu.unomaha.decpomdp.maastar.agent.Agent
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import edu.unomaha.decpomdp.maastar.game.Action
