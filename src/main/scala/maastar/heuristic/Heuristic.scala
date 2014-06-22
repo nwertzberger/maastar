@@ -1,8 +1,7 @@
-package maastar.algorithm
+package maastar.heuristic
 
-import maastar.game.State
 import maastar.agent.Agent
-import maastar.game.Action
+import maastar.game.State
 
 trait Heuristic {
   def estimateReward(agentStates: Map[Agent,Map[State, Double]]) : Double

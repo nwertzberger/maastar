@@ -1,4 +1,4 @@
-package maastar.algorithm
+package maastar.algorithm.maastar
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers

@@ -1,8 +1,7 @@
-package maastar.algorithm
+package maastar.heuristic
 
 import maastar.agent.Agent
 import maastar.game.State
-import maastar.game.Action
 
 /**
  * In the tiger game, converting it to an optimistic answer can be done
