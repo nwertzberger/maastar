@@ -1,7 +1,7 @@
 package maastar.algorithm.maastar
 
 import maastar.game.State
-import maastar.heuristic.{Heuristic, TigerGameHeuristic}
+import maastar.heuristic.TigerGameHeuristic
 
 
 /**
@@ -9,35 +9,31 @@ import maastar.heuristic.{Heuristic, TigerGameHeuristic}
  *
  * MaaStar
  */
-class MaaStar(
-               maxLayers: Int = 10,
-               policyExpander: PolicyExpander = new PolicyExpander(),
-               policyChooser: PolicyChooser = new PolicyChooser(),
-               policySplitter: PolicySplitter = new PolicySplitter(),
-               heuristic: Heuristic = new TigerGameHeuristic()) {
+class MaaStar(maxLayers: Int = 10,
+              policyExpander: PolicyExpander = new PolicyExpander(),
+              policyChooser: PolicyChooser = new PolicyChooser(
+                new TigerGameHeuristic()
+              ),
+              policySplitter: PolicySplitter = new PolicySplitter()) {
 
-
-  def calculatePolicy(initialBelief: Map[State, Float]): Policy = {
+  def calculatePolicy(initialBelief: Map[State, Double]): Policy = {
     var bestPolicy = new Policy()
 
     var openPolicies = policyExpander.expandPolicyNodes(bestPolicy)
 
     while (!openPolicies.isEmpty) {
-      val candidate = policyChooser
-        .findBestPolicy(openPolicies, heuristic, initialBelief)
-      val children = policyExpander
-        .expandPolicyNodes(candidate)
+      val candidate = policyChooser.findBestPolicy(openPolicies, initialBelief)
+      val children = policyExpander.expandPolicyNodes(candidate)
       val (completePolicies, incompletePolicies) = policySplitter.splitOnDepth(children, maxLayers)
 
       bestPolicy = policyChooser.findBestPolicy(
         completePolicies ++ Set(bestPolicy),
-        heuristic,
         initialBelief
       )
 
       openPolicies = policySplitter
         .filter(openPolicies ++ incompletePolicies, initialBelief)
-        .estimatedValuesBelow(bestPolicy.getValue(), heuristic)
+        .estimatedValuesBelow(bestPolicy.getValue())
     }
     return bestPolicy
   }

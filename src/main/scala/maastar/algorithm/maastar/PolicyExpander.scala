@@ -1,12 +1,9 @@
 package maastar.algorithm.maastar
 
-import maastar.game.{Action, State}
+import maastar.game.Action
 
 
 class PolicyExpander(allPossibleActions: Set[Action] = Set()) {
-  def determinePoliciesAtBelief(belief: Map[State, Float]): Set[Policy] = {
-    return null
-  }
 
   def expandPolicyNodes(currPolicy: Policy): Set[Policy] = {
     return allPossibleActions.map(

@@ -1,5 +1,6 @@
 package maastar.game
 
-class Action (desc : String = "Default"){
+class Action (desc : String = "Default") {
+  val description = desc
 
 }

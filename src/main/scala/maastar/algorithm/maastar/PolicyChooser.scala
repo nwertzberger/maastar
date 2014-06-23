@@ -4,9 +4,8 @@ import maastar.game.State
 import maastar.heuristic.Heuristic
 
 
-class PolicyChooser {
-  def findBestPolicy(openPolicies: Set[Policy], heuristic: Heuristic, initialBelief: Map[State, Float]) : Policy = {
-   
+class PolicyChooser(heuristic : Heuristic) {
+  def findBestPolicy(openPolicies: Set[Policy], belief: Map[State, Double]) : Policy = {
     return new Policy()
   }
 }

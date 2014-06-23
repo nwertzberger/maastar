@@ -8,7 +8,7 @@ class PolicySplitter {
     return (null, null)
   }
   
-  def filter(policies : Set[Policy], belief : Map[State, Float]) : PolicyFilter = {
+  def filter(policies : Set[Policy], belief : Map[State, Double]) : PolicyFilter = {
      return null
   }
 }
