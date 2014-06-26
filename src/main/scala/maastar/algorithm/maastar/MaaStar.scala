@@ -1,7 +1,9 @@
 package maastar.algorithm.maastar
 
 import maastar.game.State
-import maastar.heuristic.TigerGameHeuristic
+import maastar.policy.{PolicyValueOrdering, Policy}
+
+import scala.collection.mutable.PriorityQueue
 
 
 /**
@@ -9,32 +11,27 @@ import maastar.heuristic.TigerGameHeuristic
  *
  * MaaStar
  */
-class MaaStar(maxLayers: Int = 10,
+class MaaStar(
+              maxDepth : Int = 10,
+              policyEvaluator : PolicyEvaluator = new PolicyEvaluator(),
               policyExpander: PolicyExpander = new PolicyExpander(),
-              policyChooser: PolicyChooser = new PolicyChooser(
-                new TigerGameHeuristic()
-              ),
               policySplitter: PolicySplitter = new PolicySplitter()) {
 
+
+
   def calculatePolicy(initialBelief: Map[State, Double]): Policy = {
-    var bestPolicy = new Policy()
-
-    var openPolicies = policyExpander.expandPolicyNodes(bestPolicy)
-
+    val openPolicies = new PriorityQueue[Policy]()(PolicyValueOrdering)
     while (!openPolicies.isEmpty) {
-      val candidate = policyChooser.findBestPolicy(openPolicies, initialBelief)
-      val children = policyExpander.expandPolicyNodes(candidate)
-      val (completePolicies, incompletePolicies) = policySplitter.splitOnDepth(children, maxLayers)
+      val candidate = openPolicies.dequeue()
+      if (candidate.depth() >= maxDepth)
+        return candidate
 
-      bestPolicy = policyChooser.findBestPolicy(
-        completePolicies ++ Set(bestPolicy),
-        initialBelief
-      )
+      val children = policyExpander
+        .expandPolicyNodes(candidate)
+        .toSet
 
-      openPolicies = policySplitter
-        .filter(openPolicies ++ incompletePolicies, initialBelief)
-        .estimatedValuesBelow(bestPolicy.getValue())
+      children.foreach(c => openPolicies.enqueue(c))
     }
-    return bestPolicy
+    throw new Exception("candidate policy blew up")
   }
 }

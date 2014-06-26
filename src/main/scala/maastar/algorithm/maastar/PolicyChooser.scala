@@ -1,10 +1,10 @@
 package maastar.algorithm.maastar
 
 import maastar.game.State
-import maastar.heuristic.Heuristic
+import maastar.policy.Policy
 
 
-class PolicyChooser(heuristic : Heuristic) {
+class PolicyChooser() {
   def findBestPolicy(openPolicies: Set[Policy], belief: Map[State, Double]) : Policy = {
     return new Policy()
   }
