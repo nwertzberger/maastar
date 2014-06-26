@@ -6,9 +6,7 @@ class Policy(agentPolicies: Map[Agent,PolicyNode] = Map(),
              actualValue : Double = 0.0,
              estimatedValue : Double = 0.0) {
 
-  val _depth = agentPolicies
-    .map(n => n._2.depth())
-    .max
+  val _depth = if (agentPolicies.size > 0) agentPolicies.map(n => n._2.depth()).max else 0
   val _agentPolicies = agentPolicies
   val _value = actualValue
   val _estimate = estimatedValue
@@ -23,7 +21,7 @@ class Policy(agentPolicies: Map[Agent,PolicyNode] = Map(),
     leafNodes(nodes)
   }
 
-  def leafNodes(node : PolicyNode) : Set[PolicyNode] = {
+  private def leafNodes(node : PolicyNode) : Set[PolicyNode] = {
     node.transitions()
       .values
       .map(

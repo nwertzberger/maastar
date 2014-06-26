@@ -14,14 +14,15 @@ class PolicyExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
     val agent = new DecPomdpAgent("agent")
     val observation = new Observation("burn")
     val action = new Action("jump")
-    val policy = new Policy()
-    val expander = new PolicyExpander(Set(agent), Set(action), Set(observation))
+    val action2 = new Action("sit")
+    val policy = new Policy(Map(agent -> new PolicyNode(action)))
+    val expander = new PolicyExpander(Set(agent), Set(action, action2), Set(observation))
     val expandedPolicy = expander.expandPolicyNodes(policy)
 
     expandedPolicy should equal(
       Set(
         new Policy(
-          Map(agent -> new PolicyNode(action))
+          Map(agent -> new PolicyNode(action, Map(observation -> new PolicyNode(action))))
         )
       )
     )

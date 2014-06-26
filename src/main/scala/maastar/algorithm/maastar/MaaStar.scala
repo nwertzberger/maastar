@@ -12,11 +12,10 @@ import scala.collection.mutable.PriorityQueue
  * MaaStar
  */
 class MaaStar(
-              maxDepth : Int = 10,
-              policyEvaluator : PolicyEvaluator = new PolicyEvaluator(),
-              policyExpander: PolicyExpander = new PolicyExpander(),
-              policySplitter: PolicySplitter = new PolicySplitter()) {
-
+               maxDepth: Int = 10,
+               policyEvaluator: PolicyEvaluator = new PolicyEvaluator(),
+               policyExpander: PolicyExpander = new PolicyExpander(),
+               policySplitter: PolicySplitter = new PolicySplitter()) {
 
 
   def calculatePolicy(initialBelief: Map[State, Double]): Policy = {
