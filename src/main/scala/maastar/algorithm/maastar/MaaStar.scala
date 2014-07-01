@@ -25,11 +25,13 @@ class MaaStar(
       if (candidate.depth() >= maxDepth)
         return candidate
 
+      /*
       val children = policyExpander
         .expandPolicyNodes(candidate)
         .toSet
+      */
 
-      children.foreach(c => openPolicies.enqueue(c))
+      //children.foreach(c => openPolicies.enqueue(c))
     }
     throw new Exception("candidate policy blew up")
   }

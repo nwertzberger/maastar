@@ -4,6 +4,8 @@ import maastar.agent.Agent
 import maastar.game.{Observation, Action}
 import maastar.policy.{PolicyNode, Policy}
 
+import scala.collection.mutable
+
 
 class PolicyExpander(allPossibleAgents: Set[Agent] = Set(),
                      allPossibleActions: Set[Action] = Set(),
@@ -13,21 +15,23 @@ class PolicyExpander(allPossibleAgents: Set[Agent] = Set(),
     len => allPossibleObservations.subsets(len).toSet
   ).toSet.flatten
 
-  val allObservationPolicies = getActionObservationCombos(
+  val allObservationPolicies = actionObservationPermutations(
     observationCombos,
     allPossibleActions.map(act => new PolicyNode(act))
   )
 
-  private def getActionObservationCombos(observations: Set[Set[Observation]],
-                                         policies: Set[PolicyNode],
-                                         policyTransitions: Map[Set[Observation], PolicyNode] = Map()
-                                          ): Set[Map[Set[Observation], PolicyNode]] = {
+  private def actionObservationPermutations(
+      observations: Set[Set[Observation]],
+      policies: Set[PolicyNode],
+      policyTransitions: Map[Set[Observation], PolicyNode] = Map()
+      ): Set[Map[Set[Observation], PolicyNode]] = {
+
     if (observations.isEmpty) {
       return Set(policyTransitions)
     }
     else {
       return policies.map(policy =>
-        getActionObservationCombos(
+        actionObservationPermutations(
           observations.tail,
           policies,
           Map(observations.head -> policy) ++ policyTransitions)
@@ -35,15 +39,25 @@ class PolicyExpander(allPossibleAgents: Set[Agent] = Set(),
     }
   }
 
+  def getAgentPolicyCombos(agents : Set[Agent], policies : Set[PolicyNode]) : Iterator[Map[Agent, Policy]] = {
+    // For each agent and policy base
+    // expand the policy base one level.
+    val stack = new mutable.Stack()
 
-  def expandPolicyNodes(currPolicy: Policy): Set[Policy] = {
-    // For every observation combination
-    // For every action
-    // Create a new observation -> action link for a given leaf node.
-
-    // Grab all leaf nodes
-    // for each combination of observations and actions,
-
+    null
   }
+
+  def expandPolicyNodes(currPolicy: PolicyNode): Iterator[PolicyNode] = {
+    // clone the current policy tree
+    // go to each leaf node.
+    // every time you encounter a leaf node, that node needs to repeat its pattern one entire loop before the previous
+    // leaf node changes.
+
+    // track an iterator for each leafnode
+    // build new leaf nodes and clone that new tree.
+    val policyStack : mutable.Stack[PolicyNode] = new mutable.Stack().push(currPolicy)
+    null
+  }
+
 
 }

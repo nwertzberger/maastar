@@ -12,6 +12,6 @@ class Transition (_reward : Double = 0) {
   def reward() : Double = _reward
 
   override def toString() : String = 
-    "{ reward: " + _reward + ", nextStates: " + _nextStates + "}"
+    "new Transition(" + _reward + ").setNextStates(" + _nextStates + ")"
 
 }

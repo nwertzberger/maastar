@@ -22,10 +22,11 @@ class Policy(agentPolicies: Map[Agent,PolicyNode] = Map(),
   }
 
   private def leafNodes(node : PolicyNode) : Set[PolicyNode] = {
-    node.transitions()
+    node
+      .transitions
       .values
       .map(
-        child => if (child.transitions().size > 0) leafNodes(child) else Set(child)
+        child => if (child.transitions.size > 0) leafNodes(child) else Set(child)
       )
       .toSet
       .flatten
