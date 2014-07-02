@@ -47,16 +47,54 @@ class PolicyExpander(allPossibleAgents: Set[Agent] = Set(),
     null
   }
 
-  def expandPolicyNodes(currPolicy: PolicyNode): Iterator[PolicyNode] = {
-    // clone the current policy tree
-    // go to each leaf node.
-    // every time you encounter a leaf node, that node needs to repeat its pattern one entire loop before the previous
-    // leaf node changes.
+  def expandPolicyNodes(policy: PolicyNode): Iterator[PolicyNode] = {
+    // Track current combinations as a stack of iterators
+    val policyStack : mutable.Stack[(PolicyNode, Iterator[Map[Set[Observation],PolicyNode]])] = new mutable.Stack()
+    val targetPolicy = policy.createClone()
 
-    // track an iterator for each leafnode
-    // build new leaf nodes and clone that new tree.
-    val policyStack : mutable.Stack[PolicyNode] = new mutable.Stack().push(currPolicy)
-    null
+    // prime the policy stack
+    val traversedNodes : mutable.Stack[PolicyNode] = new mutable.Stack()
+    traversedNodes.push(targetPolicy)
+
+    while (!traversedNodes.isEmpty) {
+      val currNode = traversedNodes.pop()
+      for ((obs, node) <- currNode.transitions) {
+        traversedNodes.push(node)
+      }
+      if (currNode.transitions.size == 0) {
+        policyStack.push((currNode, allObservationPolicies.iterator))
+      }
+    }
+
+    return new Iterator[PolicyNode] {
+      def hasNext() = !policyStack.isEmpty && policyStack.top._2.hasNext
+      def next() : PolicyNode = {
+        // Determine next policy
+        val finishedNodes : mutable.Stack[(PolicyNode,Iterator[Map[Set[Observation],PolicyNode]])] = new mutable.Stack()
+
+        while (!policyStack.isEmpty && policyStack.top._2.isEmpty) {
+          finishedNodes.push(policyStack.pop())
+        }
+
+        if (policyStack.isEmpty) {
+          throw new RuntimeException("Next called on empty iterator")
+        }
+        else {
+          finishedNodes.push(policyStack.pop())
+          while (!finishedNodes.isEmpty) {
+            val top = finishedNodes.pop()
+            val node = top._1
+            var childIterator = top._2
+            if (childIterator.isEmpty) {
+              childIterator = allObservationPolicies.iterator
+            }
+            node.setTransitions(childIterator.next())
+            policyStack.push(top)
+          }
+          return targetPolicy.createClone()
+        }
+      }
+    }
   }
 
 

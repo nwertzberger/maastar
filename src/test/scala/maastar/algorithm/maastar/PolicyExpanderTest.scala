@@ -20,29 +20,26 @@ class PolicyExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   val expander = new PolicyExpander(Set(alice, bob), Set(jump, sit), Set(burn))
 
-  "PolicyExpander" should "pre-generate every possible leaf node" in {
+  val expectedObservationPolicies = Set(
+    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(jump, Map())),
+    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(sit, Map()), Set() -> new PolicyNode(jump, Map())),
+    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(sit, Map())),
+    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(sit, Map()), Set() -> new PolicyNode(sit, Map()))
 
-    val expectedObservationPolicies = Set(
-      Map(Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(jump, Map())),
-      Map(Set(burn) -> new PolicyNode(sit, Map()), Set() -> new PolicyNode(jump, Map())),
-      Map(Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(sit, Map())),
-      Map(Set(burn) -> new PolicyNode(sit, Map()), Set() -> new PolicyNode(sit, Map()))
-    )
+  )
+
+  "PolicyExpander" should "pre-generate every possible leaf node" in {
     expander.allObservationPolicies should equal(expectedObservationPolicies)
   }
 
-  "PolicyExpander" should "generate every policy tree combo without blowing up the stack" in {
-    val currPolicyNodes = new PolicyNode(jump,Map(
-        Set() -> new PolicyNode(jump),
-        Set(burn) -> new PolicyNode(sit)
-    ))
-    val policyTrees = expander.expandPolicyNodes(currPolicyNodes)
+  "PolicyExpander" should "generate every policy tree combo" in {
+    val currPolicyNodes = new PolicyNode(jump)
+    val policyTrees = expander.expandPolicyNodes(currPolicyNodes).toSet
 
-    /*
-    for (policy <- policyTrees) {
-      println(policy)
-    }
-    */
+    val expandedTrees = expectedObservationPolicies
+      .map(policy => new PolicyNode(jump, policy))
+      .toSet
 
+    policyTrees.toSet should equal(expandedTrees)
   }
 }

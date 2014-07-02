@@ -11,12 +11,21 @@ class PolicyNode(_action : Action, _transitions : Map[Set[Observation],PolicyNod
   def setTransitions(newTransitions: Map[Set[Observation], PolicyNode]) = {
     transitions = newTransitions
   }
-  override def toString() : String = {
-    "new PolicyNode(" + _action.toString + ", " + _transitions.toString() + ")"
+
+  def createClone(): PolicyNode = {
+    new PolicyNode(
+      action,
+      transitions
+        .map(t => t._1 -> t._2.createClone())
+        .toMap,
+      value)
   }
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[PolicyNode]
 
+  override def toString() : String = {
+    "new PolicyNode(" + action.toString + ", " + transitions.toString() + ")"
+  }
   override def equals(other: Any): Boolean = other match {
     case that: PolicyNode =>
       (that canEqual this) &&

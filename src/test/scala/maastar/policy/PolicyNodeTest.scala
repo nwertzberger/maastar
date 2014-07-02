@@ -13,7 +13,8 @@ class PolicyNodeTest extends FlatSpec with ShouldMatchers with MockFactory {
     val act = new Action("bite")
     val obs = new Observation("smell")
     val node = new PolicyNode(act, Map(Set(obs) -> new PolicyNode(act)))
-
+    node.createClone() should not be theSameInstanceAs (node)
+    node.createClone() should equal (node)
   }
 
 
