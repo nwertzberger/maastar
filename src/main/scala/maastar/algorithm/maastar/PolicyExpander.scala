@@ -62,37 +62,36 @@ class PolicyExpander(allPossibleAgents: Set[Agent] = Set(),
         traversedNodes.push(node)
       }
       if (currNode.transitions.size == 0) {
-        policyStack.push((currNode, allObservationPolicies.iterator))
+        val obsPolicies = allObservationPolicies.toIterator
+        currNode.setTransitions(obsPolicies.next())
+        policyStack.push((currNode, obsPolicies))
       }
     }
 
     return new Iterator[PolicyNode] {
-      def hasNext() = !policyStack.isEmpty && policyStack.top._2.hasNext
+      def hasNext() = !policyStack.isEmpty
       def next() : PolicyNode = {
+        val currPolicy = targetPolicy.createClone()
         // Determine next policy
         val finishedNodes : mutable.Stack[(PolicyNode,Iterator[Map[Set[Observation],PolicyNode]])] = new mutable.Stack()
 
         while (!policyStack.isEmpty && policyStack.top._2.isEmpty) {
           finishedNodes.push(policyStack.pop())
         }
-
-        if (policyStack.isEmpty) {
-          throw new RuntimeException("Next called on empty iterator")
-        }
-        else {
+        if (!policyStack.isEmpty) {
           finishedNodes.push(policyStack.pop())
           while (!finishedNodes.isEmpty) {
             val top = finishedNodes.pop()
             val node = top._1
             var childIterator = top._2
             if (childIterator.isEmpty) {
-              childIterator = allObservationPolicies.iterator
+              childIterator = allObservationPolicies.toIterator
             }
             node.setTransitions(childIterator.next())
-            policyStack.push(top)
+            policyStack.push((node, childIterator))
           }
-          return targetPolicy.createClone()
         }
+        return currPolicy
       }
     }
   }

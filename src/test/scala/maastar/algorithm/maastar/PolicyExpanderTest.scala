@@ -40,15 +40,28 @@ class PolicyExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
       .map(policy => new PolicyNode(jump, policy))
       .toSet
 
-    policyTrees.toSet should equal(expandedTrees)
+    val policySet = policyTrees.toSet
+    policySet.toSet should equal(expandedTrees)
+  }
+
+  "PolicyExpander" should "expand exponentially" in {
+    var expandedNodeIterator = expander.expandPolicyNodes(new PolicyNode(jump))
+    expandedNodeIterator = expander.expandPolicyNodes(expandedNodeIterator.next())
+    var runs = 0
+    for (expandedNode <- expandedNodeIterator) {
+      runs = runs + 1
+      expandedNode.depth() should be(2)
+    }
+    runs should be(16)
   }
 
   "PolicyExpander" should "not blow up on big expansions" in {
     var expandedNodeIterator = expander.expandPolicyNodes(new PolicyNode(jump))
-    for (n <- 2 to 100) {
+    for (i <- 2 to 10) {
       expandedNodeIterator = expander.expandPolicyNodes(expandedNodeIterator.next())
     }
-    expandedNodeIterator.next().depth() should be(100)
+    expandedNodeIterator.next().depth() should be(10)
+    expandedNodeIterator.next().totalNodes() should be(math.pow(2, 11).toInt - 1)
   }
 
 }

@@ -4,6 +4,7 @@ import maastar.game.{Action, Observation}
 
 class PolicyNode(_action : Action, _transitions : Map[Set[Observation],PolicyNode] = Map(), _value : Double = 0.0) {
   def depth() : Int = if (_transitions.size == 0) 0 else _transitions.values.map(p => p.depth()).max + 1
+  def totalNodes() : Int = 1 + _transitions.values.map(node => node.totalNodes()).fold(0){(acc, nodes) => acc + nodes}
   val action = _action
   var transitions = _transitions
   val value = _value
@@ -24,7 +25,12 @@ class PolicyNode(_action : Action, _transitions : Map[Set[Observation],PolicyNod
   def canEqual(other: Any): Boolean = other.isInstanceOf[PolicyNode]
 
   override def toString() : String = {
-    "new PolicyNode(" + action.toString + ", " + transitions.toString() + ")"
+    "" + action.description + ", (" +
+      transitions
+        .values
+        .map(_.toString())
+        .fold(""){ (acc, k) => acc + "    " + k + ""} +
+      ")"
   }
   override def equals(other: Any): Boolean = other match {
     case that: PolicyNode =>
