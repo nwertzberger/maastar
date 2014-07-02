@@ -3,7 +3,7 @@ package maastar.policy
 import maastar.game.{Action, Observation}
 
 class PolicyNode(_action : Action, _transitions : Map[Set[Observation],PolicyNode] = Map(), _value : Double = 0.0) {
-  def depth() : Int = if (_transitions.size == 0) 0 else _transitions.values.map(p => p.depth()).max
+  def depth() : Int = if (_transitions.size == 0) 0 else _transitions.values.map(p => p.depth()).max + 1
   val action = _action
   var transitions = _transitions
   val value = _value
