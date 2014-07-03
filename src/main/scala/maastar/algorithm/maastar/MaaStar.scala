@@ -14,7 +14,7 @@ import scala.collection.mutable.PriorityQueue
 class MaaStar(
                maxDepth: Int = 10,
                policyEvaluator: PolicyEvaluator = new PolicyEvaluator(),
-               policyExpander: PolicyExpander = new PolicyExpander(),
+               policyExpander: PolicyNodeExpander = new PolicyNodeExpander(),
                policySplitter: PolicySplitter = new PolicySplitter()) {
 
 

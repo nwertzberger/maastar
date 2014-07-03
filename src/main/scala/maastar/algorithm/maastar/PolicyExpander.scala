@@ -1,118 +1,64 @@
 package maastar.algorithm.maastar
 
 import maastar.agent.Agent
-import maastar.game.{Observation, Action}
 import maastar.policy.{PolicyNode, Policy}
 
 import scala.collection.mutable
 
 
-class PolicyExpander(allPossibleAgents: Set[Agent] = Set(),
-                     allPossibleActions: Set[Action] = Set(),
-                     allPossibleObservations: Set[Observation] = Set()) {
+/**
+ * Created by nwertzberger on 7/2/14.
+ */
+class PolicyExpander(
+    nodeExpander : PolicyNodeExpander
+    ) {
 
-  val observationCombos = (0 to allPossibleObservations.size).map(
-    len => allPossibleObservations.subsets(len).toSet
-  ).toSet.flatten
+  def expandPolicy(policy : Policy) : Iterator[Policy] = {
 
-  val allObservationPolicies = actionObservationPermutations(
-    observationCombos,
-    allPossibleActions.map(act => new PolicyNode(act))
-  )
-
-  private def actionObservationPermutations(
-      observations: Set[Set[Observation]],
-      policies: Set[PolicyNode],
-      policyTransitions: Map[Set[Observation], PolicyNode] = Map()
-      ): Set[Map[Set[Observation], PolicyNode]] = {
-
-    if (observations.isEmpty) {
-      return Set(policyTransitions)
+    // Track the agent policies that need to be combined.
+    val agents : mutable.Stack[Agent] = new mutable.Stack()
+    for ((agent, policy) <- policy.agentPolicies) {
+      agents.push(agent)
     }
-    else {
-      return policies.map(policy =>
-        actionObservationPermutations(
-          observations.tail,
-          policies,
-          Map(observations.head -> policy) ++ policyTransitions)
-      ).toSet.flatten
+
+    // Generate the first set of iterators
+    val policyIterators : mutable.Map[Agent, Iterator[PolicyNode]] = new mutable.HashMap()
+    for ((agent, policy) <- policy.agentPolicies) {
+      policyIterators.put(agent, nodeExpander.expandPolicyNode(policy))
     }
-  }
 
-  def getAgentPolicyCombos(
-      agents: Set[Agent],
-      policies: Set[PolicyNode]
-      ): Iterator[Map[Agent, Policy]] = {
-    // For each agent and policy base
-    // expand the policy base one level.
-    val stack = new mutable.Stack()
+    // Prime the policies
+    val nextPolicy : mutable.Map[Agent, PolicyNode] = new mutable.HashMap()
+    for ((agent, policies) <- policyIterators) {
+      nextPolicy.put(agent, policies.next())
+    }
 
-    null
-  }
+    return new Iterator[Policy] {
+      def hasNext() = !agents.isEmpty
+      def next() : Policy = {
+        val curr = nextPolicy.toMap
 
-  def expandPolicyNodes(policy: PolicyNode): Iterator[PolicyNode] = {
-    val targetPolicy = policy.createClone()
-    val policyStack = generateNodePolicyStack(targetPolicy)
+        val agentsToUpdate: mutable.Stack[Agent] = new mutable.Stack()
 
-    return new Iterator[PolicyNode] {
-      def hasNext() = !policyStack.isEmpty
+        // Track which policies have been cycled through.
+        while (!agents.isEmpty && policyIterators(agents.top).isEmpty) {
+          agentsToUpdate.push(agents.pop())
+        }
 
-      def next(): PolicyNode = {
-        val currPolicy = targetPolicy.createClone()
-        // Determine next policy
-        val finishedNodes = getFinishedNodes(policyStack)
-
-        if (!policyStack.isEmpty) {
-          finishedNodes.push(policyStack.pop())
-          while (!finishedNodes.isEmpty) {
-            val (node, childIterator) = getNextNode(finishedNodes.pop())
-            node.setTransitions(childIterator.next())
-            policyStack.push((node, childIterator))
+        if (!agents.isEmpty) {
+          agentsToUpdate.push(agents.pop())
+          while (!agentsToUpdate.isEmpty) {
+            val newAgent = agentsToUpdate.pop()
+            if (policyIterators(newAgent).isEmpty) {
+              policyIterators.put(newAgent, nodeExpander.expandPolicyNode(policy.agentPolicies(newAgent)))
+            }
+            agents.push(newAgent)
+            nextPolicy.put(newAgent, policyIterators(newAgent).next())
           }
         }
-        return currPolicy
+        return new Policy(curr)
       }
     }
   }
 
-  def getFinishedNodes(
-      policyStack: mutable.Stack[(PolicyNode, Iterator[Map[Set[Observation], PolicyNode]])]
-      ): mutable.Stack[(PolicyNode, Iterator[Map[Set[Observation], PolicyNode]])] = {
-    val finishedNodes: mutable.Stack[(PolicyNode, Iterator[Map[Set[Observation], PolicyNode]])] = new mutable.Stack()
-    while (!policyStack.isEmpty && policyStack.top._2.isEmpty) {
-      finishedNodes.push(policyStack.pop())
-    }
-    return finishedNodes
-  }
-
-  def getNextNode(
-      top: (PolicyNode, Iterator[Map[Set[Observation], PolicyNode]])
-      ): (PolicyNode, Iterator[Map[Set[Observation], PolicyNode]]) = {
-    val (node, childIterator) = top
-    if (childIterator.isEmpty) {
-      return (node, allObservationPolicies.toIterator)
-    }
-    return (node, childIterator)
-  }
-
-  def generateNodePolicyStack(
-      targetPolicy: PolicyNode
-      ): mutable.Stack[(PolicyNode, Iterator[Map[Set[Observation], PolicyNode]])] = {
-    val policyStack: mutable.Stack[(PolicyNode, Iterator[Map[Set[Observation], PolicyNode]])] = new mutable.Stack()
-    val traversedNodes: mutable.Stack[PolicyNode] = new mutable.Stack()
-    traversedNodes.push(targetPolicy)
-
-    while (!traversedNodes.isEmpty) {
-      val currNode = traversedNodes.pop()
-      for ((obs, node) <- currNode.transitions) {
-        traversedNodes.push(node)
-      }
-      if (currNode.transitions.size == 0) {
-        val obsPolicies = allObservationPolicies.toIterator
-        currNode.setTransitions(obsPolicies.next())
-        policyStack.push((currNode, obsPolicies))
-      }
-    }
-    return policyStack
-  }
 }

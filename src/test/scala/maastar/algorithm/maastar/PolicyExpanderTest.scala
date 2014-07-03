@@ -1,67 +1,45 @@
 package maastar.algorithm.maastar
 
 import maastar.agent.{DecPomdpAgent, Agent}
-import maastar.game.{Observation, Action}
-import maastar.policy.{PolicyNode, Policy}
-import org.junit.runner.RunWith
+import maastar.game.{Action, Observation}
+import maastar.policy.{Policy, PolicyNode}
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, ShouldMatchers}
 
-@RunWith(classOf[JUnitRunner])
+/**
+ * Created by nwertzberger on 7/2/14.
+ */
 class PolicyExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
 
-  // This is the toy world we built... one observation, two agents, two actions
-  val alice = new DecPomdpAgent("alice")
-  val bob = new DecPomdpAgent("bob")
-  val burn = new Observation("burn")
+  val smell = new Observation("smell")
   val jump = new Action("jump")
   val sit = new Action("sit")
+  val node = new PolicyNode(jump)
+  val agent1 = new DecPomdpAgent("agent1")
+  val agent2 = new DecPomdpAgent("agent2")
+  val testPolicy = new Policy(Map(agent1 -> node, agent2 -> node))
 
-  val expander = new PolicyExpander(Set(alice, bob), Set(jump, sit), Set(burn))
+  val nodeExpander = new PolicyNodeExpander(Set(agent1), Set(jump, sit), Set(smell))
+  val expander = new PolicyExpander(nodeExpander)
 
-  val expectedObservationPolicies = Set(
-    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(jump, Map())),
-    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(sit, Map()), Set() -> new PolicyNode(jump, Map())),
-    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(sit, Map())),
-    Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(sit, Map()), Set() -> new PolicyNode(sit, Map()))
-
-  )
-
-  "PolicyExpander" should "pre-generate every possible leaf node" in {
-    expander.allObservationPolicies should equal(expectedObservationPolicies)
-  }
-
-  "PolicyExpander" should "generate every policy tree combo" in {
-    val currPolicyNodes = new PolicyNode(jump)
-    val policyTrees = expander.expandPolicyNodes(currPolicyNodes).toSet
-
-    val expandedTrees = expectedObservationPolicies
-      .map(policy => new PolicyNode(jump, policy))
-      .toSet
-
-    val policySet = policyTrees.toSet
-    policySet.toSet should equal(expandedTrees)
-  }
-
-  "PolicyExpander" should "expand exponentially" in {
-    var expandedNodeIterator = expander.expandPolicyNodes(new PolicyNode(jump))
-    expandedNodeIterator = expander.expandPolicyNodes(expandedNodeIterator.next())
-    var runs = 0
-    for (expandedNode <- expandedNodeIterator) {
-      runs = runs + 1
-      expandedNode.depth() should be(2)
+  "PolicyExpander" should "expand to every possible sub policy" in {
+    var policyCount = 0
+    // Test a brute force expansion of 2 agents at 1 layer deep
+    for (policy <- expander.expandPolicy(testPolicy)) {
+      policyCount = policyCount + 1
+      println(policy)
     }
-    runs should be(16)
+    policyCount should be(math.pow(4, 2).toInt)
   }
 
-  "PolicyExpander" should "not blow up on big expansions" in {
-    var expandedNodeIterator = expander.expandPolicyNodes(new PolicyNode(jump))
-    for (i <- 2 to 10) {
-      expandedNodeIterator = expander.expandPolicyNodes(expandedNodeIterator.next())
+  "PolicyExpander" should "expand policies exponentially" in {
+    var policyCount = 0
+    // Test a brute force expansion of 2 agents at 2 layers deep
+    for (policy <- expander.expandPolicy(testPolicy)) {
+      for (subPolicy <- expander.expandPolicy(policy)) {
+        policyCount = policyCount + 1
+      }
     }
-    expandedNodeIterator.next().depth() should be(10)
-    expandedNodeIterator.next().totalNodes() should be(math.pow(2, 11).toInt - 1)
+    policyCount should be (math.pow(4 * 16,2).toInt)
   }
-
 }
