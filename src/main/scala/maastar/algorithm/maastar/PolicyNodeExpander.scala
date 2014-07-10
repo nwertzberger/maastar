@@ -7,8 +7,7 @@ import maastar.policy.{PolicyNode, Policy}
 import scala.collection.mutable
 
 
-class PolicyNodeExpander(allPossibleAgents: Set[Agent] = Set(),
-                     allPossibleActions: Set[Action] = Set(),
+class PolicyNodeExpander(allPossibleActions: Set[Action] = Set(),
                      allPossibleObservations: Set[Observation] = Set()) {
 
   val observationCombos = (0 to allPossibleObservations.size).map(

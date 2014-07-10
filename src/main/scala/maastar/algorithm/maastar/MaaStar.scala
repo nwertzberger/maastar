@@ -14,7 +14,7 @@ import scala.collection.mutable.PriorityQueue
 class MaaStar(
                maxDepth: Int = 10,
                policyEvaluator: PolicyEvaluator = new PolicyEvaluator(),
-               policyExpander: PolicyNodeExpander = new PolicyNodeExpander(),
+               policyExpander: PolicyExpander = new PolicyExpander(new PolicyNodeExpander()),
                policySplitter: PolicySplitter = new PolicySplitter()) {
 
 
@@ -22,16 +22,13 @@ class MaaStar(
     val openPolicies = new PriorityQueue[Policy]()(PolicyValueOrdering)
     while (!openPolicies.isEmpty) {
       val candidate = openPolicies.dequeue()
-      if (candidate.depth() >= maxDepth)
+      if (candidate.depth >= maxDepth)
         return candidate
 
-      /*
-      val children = policyExpander
-        .expandPolicyNodes(candidate)
-        .toSet
-      */
-
-      //children.foreach(c => openPolicies.enqueue(c))
+      val children = policyExpander.expandPolicy(candidate)
+      children.foreach{ c =>
+        openPolicies.enqueue(c)
+      }
     }
     throw new Exception("candidate policy blew up")
   }

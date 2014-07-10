@@ -12,13 +12,11 @@ import org.scalatest.{FlatSpec, ShouldMatchers}
 class PolicyNodeExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
 
   // This is the toy world we built... one observation, two agents, two actions
-  val alice = new DecPomdpAgent("alice")
-  val bob = new DecPomdpAgent("bob")
   val burn = new Observation("burn")
   val jump = new Action("jump")
   val sit = new Action("sit")
 
-  val expander = new PolicyNodeExpander(Set(alice, bob), Set(jump, sit), Set(burn))
+  val expander = new PolicyNodeExpander(Set(jump, sit), Set(burn))
 
   val expectedObservationPolicies = Set(
     Map[Set[Observation],PolicyNode](Set(burn) -> new PolicyNode(jump, Map()), Set() -> new PolicyNode(jump, Map())),

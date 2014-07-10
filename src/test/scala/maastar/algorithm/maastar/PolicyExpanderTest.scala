@@ -19,7 +19,7 @@ class PolicyExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
   val agent2 = new DecPomdpAgent("agent2")
   val testPolicy = new Policy(Map(agent1 -> node, agent2 -> node))
 
-  val nodeExpander = new PolicyNodeExpander(Set(agent1), Set(jump, sit), Set(smell))
+  val nodeExpander = new PolicyNodeExpander(Set(jump, sit), Set(smell))
   val expander = new PolicyExpander(nodeExpander)
 
   "PolicyExpander" should "expand to every possible sub policy" in {
@@ -27,7 +27,6 @@ class PolicyExpanderTest extends FlatSpec with ShouldMatchers with MockFactory {
     // Test a brute force expansion of 2 agents at 1 layer deep
     for (policy <- expander.expandPolicy(testPolicy)) {
       policyCount = policyCount + 1
-      println(policy)
     }
     policyCount should be(math.pow(4, 2).toInt)
   }

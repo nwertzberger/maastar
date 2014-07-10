@@ -1,6 +1,6 @@
 package maastar.game
 
-class Transition (_reward : Double = 0) {
+class Transition (_reward : Double = 0.0) {
   var _nextStates : Map[StateObservation,Double] = null
 
   def setNextStates(nextStates : Map[StateObservation,Double]) = {
@@ -8,8 +8,8 @@ class Transition (_reward : Double = 0) {
   }
   
   def nextStates() = _nextStates
+  val reward = _reward
   
-  def reward() : Double = _reward
 
   override def toString() : String = 
     "new Transition(" + _reward + ").setNextStates(" + _nextStates + ")"
