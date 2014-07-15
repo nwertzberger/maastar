@@ -14,16 +14,19 @@ class PolicyEvaluatorTest extends FlatSpec with ShouldMatchers with MockFactory 
     val game = new TigerGame()
     val evaluator = new PolicyEvaluator()
     val agentActions = game.getAgents().map{ agent =>
-        (agent -> game.getActions().iterator.next())
-      }.toMap
+      agent -> game.listen
+    }.toMap
     val policy = game.getStates().map{ state =>
       (state -> agentActions)
     }.toMap
-    evaluator.determineBellmanValue(policy, game) should be(game.getStates()
-      .map{ state =>
-      state -> -2.0
-    }.toMap)
+
+    val stepOneUtil = evaluator.determineBellmanValue(policy, game)
+    stepOneUtil should be(game.getStates().map{ state => state -> -2.0 }.toMap)
+
+    val stepTwoUtil = evaluator.determineBellmanValue(policy, game, stepOneUtil)
+    stepTwoUtil should be(game.getStates().map{ state => state -> -4.0 }.toMap)
 
   }
+
 
 }

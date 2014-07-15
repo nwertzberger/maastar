@@ -11,4 +11,8 @@ class DecPomdpAgent(desc : String) extends Agent {
 
   def observe(observations: Set[Observation]) : Unit = {
   }
+
+  override def toString() : String = {
+    "\"" + desc + "\""
+  }
 }

@@ -9,4 +9,8 @@ class State(
   def getJointActionTransition(jointAction: Map[Agent, Action]): Transition = {
     return jointActionTransitions(jointAction)
   }
+
+  override def toString() : String = {
+    "\"" + desc + "\""
+  }
 }
