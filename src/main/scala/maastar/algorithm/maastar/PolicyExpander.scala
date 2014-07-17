@@ -10,7 +10,7 @@ import scala.collection.mutable
  * Created by nwertzberger on 7/2/14.
  */
 class PolicyExpander(
-    nodeExpander : PolicyNodeExpander
+    nodeExpander : PolicyNodeExpander = new PolicyNodeExpander()
     ) {
 
   def expandPolicy(policy : Policy) : Iterator[Policy] = {

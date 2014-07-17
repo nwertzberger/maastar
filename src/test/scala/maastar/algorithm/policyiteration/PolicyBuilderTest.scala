@@ -18,6 +18,16 @@ class PolicyBuilderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "find an optimal policy" in {
-    println(builder.buildMaximalPolicy(new TigerGame()))
+    val game = new TigerGame()
+    builder.buildMaximalPolicy(game) should be(Map(
+      game.tigerLeft -> Map(
+        game.agent1 -> game.doorRight,
+        game.agent2 -> game.doorRight
+      ),
+      game.tigerRight -> Map(
+        game.agent1 -> game.doorLeft,
+        game.agent2 -> game.doorLeft
+      )
+    ))
   }
 }

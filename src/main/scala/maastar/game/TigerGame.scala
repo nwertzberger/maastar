@@ -5,9 +5,11 @@ import maastar.agent.Agent
 import maastar.agent.DecPomdpAgent
 
 class TigerGame (
-    agent1 : Agent = new DecPomdpAgent("Agent 1"),
-    agent2 : Agent = new DecPomdpAgent("Agent 2")) {
+    _agent1 : Agent = new DecPomdpAgent("Agent 1"),
+    _agent2 : Agent = new DecPomdpAgent("Agent 2")) {
 
+  val agent1 = _agent1
+  val agent2 = _agent2
   val listen = new Action("Listen")
   val doorLeft = new Action("Open Door Left")
   val doorRight = new Action("Open Door Right")
