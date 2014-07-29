@@ -20,6 +20,7 @@ class MaaStar(
 
   def calculatePolicy(initialBelief: Map[State, Double]): Policy = {
     val openPolicies = new PriorityQueue[Policy]()(PolicyValueOrdering)
+    
     while (!openPolicies.isEmpty) {
       val candidate = openPolicies.dequeue()
       if (candidate.depth >= maxDepth)
