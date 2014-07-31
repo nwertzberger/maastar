@@ -1,7 +1,7 @@
 package maastar.algorithm.maastar
 
 import maastar.agent.{DecPomdpAgent, Agent}
-import maastar.game.{StateObservation, Transition, Action, State}
+import maastar.game._
 import maastar.policy.PolicyNode
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, ShouldMatchers}
@@ -22,7 +22,7 @@ class PolicyEvaluatorTest extends FlatSpec with ShouldMatchers with MockFactory 
   )
   state.getJointActionTransition(doubleStomp)
     .setNextStates(Map(
-      new StateObservation(state, Map()) -> 1.0
+      new StateObservation(state, Map(agent1 -> Map(), agent2 -> Map())) -> 1.0
     )
   )
 
@@ -43,6 +43,17 @@ class PolicyEvaluatorTest extends FlatSpec with ShouldMatchers with MockFactory 
       agent2 -> new PolicyNode(action, Map(Set() -> new PolicyNode(action)))
     )
     eval.utilityOf(stupidPolicy, Map(state -> 1.0)) should be(0.2)
+  }
+
+  it should "give one response for no observations" in {
+    val noAgentObs : Map[Agent, Set[Observation]] = Map(agent1 -> Set(), agent2 -> Set())
+    eval.getAllAgentObservationCombinations(noAgentObs).toList should equal(List(noAgentObs))
+  }
+
+  it should "get four responses for one possible observation" in {
+    val observation = new Observation("stinks")
+    val oneAgentObs : Map[Agent, Set[Observation]] = Map(agent1 -> Set(observation), agent2 -> Set(observation))
+    eval.getAllAgentObservationCombinations(oneAgentObs).toList.size should equal(4)
   }
 
 }
