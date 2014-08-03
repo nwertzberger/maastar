@@ -1,32 +1,46 @@
 package maastar.algorithm.maastar
 
+import java.beans.Statement
+
 import maastar.agent.Agent
+import maastar.algorithm.policyiteration.{MdpPolicyIterationEvaluator, MdpPolicyEvaluator}
 import maastar.game._
 import maastar.policy.PolicyNode
 
 import scala.collection.mutable
 
-class PolicyEvaluator() {
+class PolicyEvaluator(
+    policyHeuristic : MdpPolicyIterationEvaluator = new MdpPolicyIterationEvaluator(),
+    game : TigerGame = new TigerGame()
+) {
+
+    val heuristicPolicy = policyHeuristic.generatePolicy(game)
+
     def utilityOf(
-        policies: Map[Agent, PolicyNode],
-        belief: Map[State, Double]
+        jointPolicy: Map[Agent, PolicyNode],
+        belief: Map[State, Double],
+        depth : Int
     ): Double = {
-
         belief.map { case (state, prob) =>
-            val transition = getTransition(policies, state)
-            prob * (transition.reward + getFuture(transition, policies))
-        }.fold(0.0) { (acc: Double, x: Double) => acc + x}
+            val transition = getTransition(jointPolicy, state)
+            prob * (transition.reward + getFuture(transition, jointPolicy, depth - 1))
+        }.fold(0.0) { (acc: Double, x: Double) => acc + x }
     }
 
-    private def getTransition(policies: Map[Agent, PolicyNode], state: State) = {
-        state.getJointActionTransition(
-            policies.map { case (agent, node) => agent -> node.action}.toMap
-        )
-    }
-
-    private def getFuture(transition: Transition, policies: Map[Agent, PolicyNode]): Double = {
+    private def getFuture(
+        transition: Transition, policies: Map[Agent, PolicyNode],
+        depth : Int
+    ): Double = {
         if (isAnyPolicyEmpty(policies)) {
-            0.0
+            if (depth > 0) {
+                transition.nextStates().map { case (stateObs, stateProb) =>
+                    val agentObservations = stateObs.observations()
+                    val state = stateObs.state()
+                    stateProb * policyHeuristic.estimateValueAtState(state, depth, game, heuristicPolicy)
+                }.fold(0.0) { (acc: Double, x: Double) => acc + x }
+            } else {
+                0.0
+            }
         } else {
             transition.nextStates().map { case (stateObs, stateProb) =>
                 val agentObservations = stateObs.observations()
@@ -34,23 +48,18 @@ class PolicyEvaluator() {
                 stateProb * allTransitionRewards(
                     policies,
                     agentObservations,
-                    state)
-            }.fold(0.0) { (acc: Double, x: Double) => acc + x}
+                    state,
+                    depth)
+            }.fold(0.0) { (acc: Double, x: Double) => acc + x }
         }
-    }
-
-    private def isAnyPolicyEmpty(policies: Map[Agent, PolicyNode]): Boolean = {
-        policies.values
-            .map { policy => policy.transitions.isEmpty}
-            .fold(false) { (acc, x) => x || acc}
     }
 
     private def allTransitionRewards(
         policies: Map[Agent, PolicyNode],
         agentObservations: Map[Agent, Map[Observation, Double]],
-        state: State
+        state: State,
+        depth : Int
     ): Double = {
-
         getAllAgentObservationCombinations(
             agentObservations.map {
                 case (agent, obs) => agent -> obs.keys.toSet
@@ -60,9 +69,21 @@ class PolicyEvaluator() {
                 agent -> node.transitions(agentObs(agent))
             }.toMap
             val prob = calculateJointObservationProbability(agentObs, agentObservations)
-            val util = utilityOf(newPolicy, Map(state -> 1.0))
+            val util = utilityOf(newPolicy, Map(state -> 1.0), depth)
             prob * util
-        }.fold(0.0) { (acc, x) => acc + x}
+        }.fold(0.0) { (acc, x) => acc + x }
+    }
+
+    private def getTransition(policies: Map[Agent, PolicyNode], state: State) = {
+        state.getJointActionTransition(
+            policies.map { case (agent, node) => agent -> node.action }.toMap
+        )
+    }
+
+    private def isAnyPolicyEmpty(policies: Map[Agent, PolicyNode]): Boolean = {
+        policies.values
+            .map { policy => policy.transitions.isEmpty }
+            .fold(false) { (acc, x) => x || acc }
     }
 
     private def calculateJointObservationProbability(
@@ -72,18 +93,10 @@ class PolicyEvaluator() {
 
         agentObservationProbabilities.map {
             case (agent, observationProbabilities) =>
-                if (observationProbabilities.isEmpty) {
-                    1.0
-                } else {
-                    observationProbabilities.map { case (obs, prob) =>
-                        if (agentObs(agent).contains(obs)) {
-                            prob
-                        } else {
-                            1.0 - prob
-                        }
-                    }.fold(1.0) { (acc, x) => acc * x}
-                }
-        }.fold(1.0) { (acc, x) => acc * x}
+                observationProbabilities.map { case (obs, prob) =>
+                    if (agentObs(agent).contains(obs)) prob else (1.0 - prob)
+                }.fold(1.0) { (acc, x) => acc * x }
+        }.fold(1.0) { (acc, x) => acc * x }
 
     }
 
@@ -103,8 +116,8 @@ class PolicyEvaluator() {
 
         return new Iterator[Map[Agent, Set[Observation]]]() {
             def hasNext() = agentCombos.values
-                .map { sets => !sets.isEmpty}
-                .fold(false) { (acc, x) => acc || x}
+                .map { sets => !sets.isEmpty }
+                .fold(false) { (acc, x) => acc || x }
 
             def next(): Map[Agent, Set[Observation]] = {
                 if (activeAgentMap.isEmpty) {

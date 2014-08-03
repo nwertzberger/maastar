@@ -34,16 +34,16 @@ class MdpPolicyIterationEvaluator(
 
     @tailrec final def estimateValueAtState(
         state: State,
-        policy: Map[State, Map[Agent, Action]],
-        game: TigerGame,
         horizon: Int,
+        game: TigerGame,
+        policy: Map[State, Map[Agent, Action]],
         currUtility: Map[State, Double] = Map()
     ): Double = {
         val utility = evaluator.determineBellmanValue(policy, game, currUtility)
-        if (horizon == 1) {
+        if (horizon <= 1) {
             return utility(state)
         } else {
-            return estimateValueAtState(state, policy, game, horizon - 1, utility)
+            return estimateValueAtState(state, horizon - 1, game, policy, utility)
         }
     }
 

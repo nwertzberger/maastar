@@ -34,7 +34,7 @@ class PolicyEvaluatorTest extends FlatSpec with ShouldMatchers with MockFactory 
             agent2 -> new PolicyNode(action)
         )
 
-        eval.utilityOf(stupidPolicy, Map(state -> 1.0)) should be(0.1)
+        eval.utilityOf(stupidPolicy, Map(state -> 1.0), 1) should be(0.1)
     }
 
     it should "track down to sub-transitions" in {
@@ -42,7 +42,7 @@ class PolicyEvaluatorTest extends FlatSpec with ShouldMatchers with MockFactory 
             agent1 -> new PolicyNode(action, Map(Set() -> new PolicyNode(action))),
             agent2 -> new PolicyNode(action, Map(Set() -> new PolicyNode(action)))
         )
-        eval.utilityOf(stupidPolicy, Map(state -> 1.0)) should be(0.2)
+        eval.utilityOf(stupidPolicy, Map(state -> 1.0), 0) should be(0.2)
     }
 
     it should "give one response for no observations" in {

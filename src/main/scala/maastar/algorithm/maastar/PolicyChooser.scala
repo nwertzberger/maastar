@@ -13,7 +13,7 @@ class PolicyChooser(
         openPolicies.map { policy =>
             val policyDepth = policy.depth()
             val heuristicDepth = depth - policyDepth
-            policyEvaluator.utilityOf(policy.agentPolicies, belief)
+            policyEvaluator.utilityOf(policy.agentPolicies, belief, depth)
         }
         null
     }

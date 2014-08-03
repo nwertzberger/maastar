@@ -32,7 +32,7 @@ class MdpPolicyIterationEvaluatorTest extends FlatSpec with ShouldMatchers with 
 
         val policy = iteration.generatePolicy(game)
 
-        iteration.estimateValueAtState(game.getStartingState(), policy, game, 1) should be(20.0)
-        iteration.estimateValueAtState(game.getStartingState(), policy, game, 2) should be(40.0)
+        iteration.estimateValueAtState(game.getStartingState(), 1, game, policy) should be(20.0)
+        iteration.estimateValueAtState(game.getStartingState(), 2, game, policy) should be(40.0)
     }
 }
