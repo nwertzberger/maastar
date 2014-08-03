@@ -1,9 +1,9 @@
 package maastar.algorithm.maastar
 
-import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
+import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.matchers.ShouldMatchers
 
 
 /**
@@ -11,8 +11,8 @@ import org.scalatest.junit.JUnitRunner
  */
 @RunWith(classOf[JUnitRunner])
 class MaaStarTest extends FlatSpec with ShouldMatchers {
-  "game" should "work" in {
-    1 should be(1)
-  }
-  
+    "game" should "work" in {
+        1 should be(1)
+    }
+
 }

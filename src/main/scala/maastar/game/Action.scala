@@ -1,10 +1,10 @@
 package maastar.game
 
-class Action (desc : String = "Default") {
-  val description = desc
+class Action(desc: String = "Default") {
+    val description = desc
 
-  override def toString() : String = {
-    "\"" + desc + "\""
-  }
+    override def toString(): String = {
+        "\"" + desc + "\""
+    }
 
 }

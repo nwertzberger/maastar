@@ -11,13 +11,14 @@ import maastar.game.{Action, State}
  *
  */
 class TigerGameHeuristic extends Heuristic {
-  def estimateReward(
-                      agentStates: Map[Agent, Map[State, Double]],
-                      jointAction: Map[Agent, Action]): Double = {
-    return agentStates
-      .values
-      .foldLeft(Set[State]()) { (acc, stuff) => acc ++ stuff.keySet}
-      .map(_.getJointActionTransition(jointAction).reward())
-      .max
-  }
+    def estimateReward(
+        agentStates: Map[Agent, Map[State, Double]],
+        jointAction: Map[Agent, Action]
+    ): Double = {
+        return agentStates
+            .values
+            .foldLeft(Set[State]()) { (acc, stuff) => acc ++ stuff.keySet}
+            .map(_.getJointActionTransition(jointAction).reward)
+            .max
+    }
 }

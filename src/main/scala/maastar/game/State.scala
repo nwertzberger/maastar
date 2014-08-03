@@ -3,14 +3,15 @@ package maastar.game
 import maastar.agent.Agent
 
 class State(
-             desc: String = "Default",
-             jointActionTransitions: Map[Map[Agent, Action], Transition] = null) {
+    desc: String = "Default",
+    jointActionTransitions: Map[Map[Agent, Action], Transition] = null
+) {
 
-  def getJointActionTransition(jointAction: Map[Agent, Action]): Transition = {
-    return jointActionTransitions(jointAction)
-  }
+    def getJointActionTransition(jointAction: Map[Agent, Action]): Transition = {
+        return jointActionTransitions(jointAction)
+    }
 
-  override def toString() : String = {
-    "\"" + desc + "\""
-  }
+    override def toString(): String = {
+        "\"" + desc + "\""
+    }
 }

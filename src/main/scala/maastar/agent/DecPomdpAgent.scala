@@ -1,18 +1,17 @@
 package maastar.agent
 
-import maastar.game.Action
-import maastar.game.Observation
+import maastar.game.{Action, Observation}
 
-class DecPomdpAgent(desc : String) extends Agent {
-  
-  def chooseAction(): Action = {
-    null
-  }
+class DecPomdpAgent(desc: String) extends Agent {
 
-  def observe(observations: Set[Observation]) : Unit = {
-  }
+    def chooseAction(): Action = {
+        null
+    }
 
-  override def toString() : String = {
-    "\"" + desc + "\""
-  }
+    def observe(observations: Set[Observation]): Unit = {
+    }
+
+    override def toString(): String = {
+        "\"" + desc + "\""
+    }
 }
