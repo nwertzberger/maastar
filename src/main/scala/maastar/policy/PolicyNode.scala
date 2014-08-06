@@ -29,8 +29,7 @@ class PolicyNode(_action: Action, _transitions: Map[Set[Observation], PolicyNode
     override def toString(): String = {
         "" + action.description + ", (" +
             transitions
-                .values
-                .map(_.toString())
+                .map{case (key, value) => key.toString() + "->" + value.toString() }
                 .fold("") { (acc, k) => acc + "    " + k + ""} +
             ")"
     }

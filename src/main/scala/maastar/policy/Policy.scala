@@ -4,13 +4,11 @@ import maastar.agent.Agent
 
 class Policy(
     _agentPolicies: Map[Agent, PolicyNode] = Map(),
-    _actualValue: Double = 0.0,
-    _estimatedValue: Double = 0.0
+    _estimatedValue: Double = Double.NaN
 ) {
 
     val agentPolicies = _agentPolicies
-    val value = _actualValue
-    val estimate = _estimatedValue
+    var estimate = _estimatedValue
 
     def depth(): Int = {
         if (agentPolicies.size > 0)
@@ -43,7 +41,6 @@ class Policy(
         case that: Policy =>
             (that canEqual this) &&
                 agentPolicies == that.agentPolicies &&
-                value == that.value &&
                 estimate == that.estimate
         case _ => false
     }

@@ -93,6 +93,10 @@ class TigerGame(
         return Set(listen, doorLeft, doorRight)
     }
 
+    def getObservations() : Set[Observation] = {
+        return Set(growlLeft, growlRight)
+    }
+
     def getStartingState(): State = {
         if (Math.random() < 0.5) tigerLeft else tigerRight
     }
