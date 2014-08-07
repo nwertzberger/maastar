@@ -7,4 +7,6 @@ class Action(desc: String = "Default") {
         "\"" + desc + "\""
     }
 
+    def canEqual(other: Any): Boolean = other.isInstanceOf[Action]
+
 }

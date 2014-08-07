@@ -8,7 +8,7 @@ class State(
 ) {
 
     def getJointActionTransition(jointAction: Map[Agent, Action]): Transition = {
-        return jointActionTransitions(jointAction)
+        jointActionTransitions(jointAction)
     }
 
     override def toString(): String = {

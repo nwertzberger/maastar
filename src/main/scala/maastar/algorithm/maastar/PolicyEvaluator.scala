@@ -75,9 +75,10 @@ class PolicyEvaluator(
     }
 
     private def getTransition(policies: Map[Agent, PolicyNode], state: State) = {
-        state.getJointActionTransition(
-            policies.map { case (agent, node) => agent -> node.action }.toMap
-        )
+        val jointAction = policies.map {
+            case (agent, node) => agent -> node.action
+        }.toMap
+        state.getJointActionTransition(jointAction)
     }
 
     private def isAnyPolicyEmpty(policies: Map[Agent, PolicyNode]): Boolean = {

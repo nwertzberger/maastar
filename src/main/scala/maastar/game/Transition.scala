@@ -11,8 +11,9 @@ class Transition(_reward: Double = 0.0) {
 
     val reward = _reward
 
-
     override def toString(): String =
         "new Transition(" + _reward + ").setNextStates(" + _nextStates + ")"
+
+
 
 }
