@@ -4,6 +4,7 @@ import maastar.algorithm.policyiteration.MdpPolicyIterationEvaluator
 import maastar.game.{State, TigerGame}
 import maastar.policy.{Policy, PolicyNode, PolicyValueOrdering}
 
+import scala.collection.JavaConversions
 import scala.collection.mutable.PriorityQueue
 
 
@@ -24,10 +25,18 @@ class MaaStar(
         new PolicyNodeExpander(game.getActions(), game.getObservations())
     )
 
-    def calculatePolicy(initialBelief: Map[State, Double], maxDepth : Int): Policy = {
+    def calculatePolicyJava(initialBelief: java.util.Map[State, java.lang.Double], maxDepth: Int): Policy = {
+        val newBelief = JavaConversions.mapAsScalaMap(initialBelief)
+            .map{case (k, v) => k -> Double2double(v)}.toMap
+
+        calculatePolicy(newBelief, maxDepth)
+    }
+
+    def calculatePolicy(initialBelief: Map[State, Double], maxDepth: Int): Policy = {
 
         val openPolicies = new PriorityQueue[Policy]()(PolicyValueOrdering)
 
+        var counter = 0
         // Initialize all possible depth 0 policies.
         game.getActions().foreach { act1 =>
             game.getActions().foreach { act2 =>
@@ -36,6 +45,7 @@ class MaaStar(
                         game.agent2 -> new PolicyNode(act2)
                     )
                 )
+                counter = counter + 1
                 newPolicy.estimate = evaluator.utilityOf(
                     newPolicy.agentPolicies,
                     initialBelief,
@@ -50,8 +60,8 @@ class MaaStar(
                 return candidate
 
             val children = policyExpander.expandPolicy(candidate)
-            var count = 0
             children.foreach { c =>
+                counter = counter + 1
                 c.estimate = evaluator.utilityOf(c.agentPolicies, initialBelief, maxDepth)
                 openPolicies.enqueue(c)
             }

@@ -4,18 +4,30 @@
 	<groupId>edu.unomaha.decpomdp</groupId>
 	<artifactId>DecPomdpSolverMaaStar</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <properties>
+        <depth>1</depth>
+    </properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
 				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
 				</executions>
 				<configuration>
 					<jvmArgs>
@@ -24,6 +36,21 @@
 					</jvmArgs>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-Xms1024m</argument>
+                        <argument>-Xmx1024m</argument>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>MaaStarMain</argument>
+                        <argument>${depth}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>

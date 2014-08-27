@@ -6,6 +6,9 @@ class TigerGame(
     _agent1: Agent = new DecPomdpAgent("Agent 1"),
     _agent2: Agent = new DecPomdpAgent("Agent 2")
 ) {
+    def this() {
+        this(new DecPomdpAgent("Agent 1"), new DecPomdpAgent("Agent 2"))
+    }
 
     val agent1 = _agent1
     val agent2 = _agent2
@@ -21,12 +24,12 @@ class TigerGame(
         agent1 -> Map(growlLeft -> 0.5, growlRight -> 0.5),
         agent2 -> Map(growlLeft -> 0.5, growlRight -> 0.5))
     val tigerProbablyLeft = Map(
-        agent1 -> Map(growlLeft -> 0.85, growlRight -> 0.15),
+        agent1 -> Map(growlLeft -> 0.5, growlRight -> 0.5),
         agent2 -> Map(growlLeft -> 0.85, growlRight -> 0.15))
 
     val tigerProbablyRight = Map(
         agent1 -> Map(growlLeft -> 0.15, growlRight -> 0.85),
-        agent2 -> Map(growlLeft -> 0.15, growlRight -> 0.85))
+        agent2 -> Map(growlLeft -> 0.5, growlRight -> 0.5))
 
     val tigerLeftTransition = new Transition(-2.0)
     val tigerRightTransition = new Transition(-2.0)
@@ -100,4 +103,5 @@ class TigerGame(
     def getStartingState(): State = {
         if (Math.random() < 0.5) tigerLeft else tigerRight
     }
+
 }

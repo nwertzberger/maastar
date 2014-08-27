@@ -69,6 +69,7 @@ class MaaStarTest extends FlatSpec with ShouldMatchers {
             game.tigerRight -> 0.5
         ), 1)
 
+        println()
         policy.agentPolicies.foreach{ case (agent, p) =>
             println(agent + " = " + p.action)
             p.transitions.foreach{ case (obs, node) =>
@@ -86,6 +87,7 @@ class MaaStarTest extends FlatSpec with ShouldMatchers {
             game.tigerRight -> 0.4
         ), 1)
 
+        println()
         policy.agentPolicies.foreach{ case (agent, p) =>
             println(agent + " = " + p.action)
             p.transitions.foreach{ case (obs, node) =>
@@ -93,5 +95,25 @@ class MaaStarTest extends FlatSpec with ShouldMatchers {
             }
         }
     }
+
+    /*
+    "game" should "work for depth 2 policies" in {
+        val game = new TigerGame()
+
+        val maaStar = new MaaStar(game)
+        val policy = maaStar.calculatePolicy(Map(
+            game.tigerLeft -> 0.5,
+            game.tigerRight -> 0.5
+        ), 2)
+
+        println()
+        policy.agentPolicies.foreach{ case (agent, p) =>
+            println(agent + " = " + p.action)
+            p.transitions.foreach{ case (obs, node) =>
+                println("    " + obs + " = " + node)
+            }
+        }
+    }
+    */
 
 }
