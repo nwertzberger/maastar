@@ -21,6 +21,8 @@ public class MaaStarMain {
     public static void main(String[] args) {
         TigerGame game = new TigerGame();
         Map<State, Double> initialBelief = new HashMap<State, Double>();
+        initialBelief.put(game.tigerLeft(), 0.5);
+        initialBelief.put(game.tigerRight(), 0.5);
 
         MaaStar maaStar = new MaaStar(game);
         Policy policy = maaStar.calculatePolicyJava(initialBelief, Integer.valueOf(args[0]));
